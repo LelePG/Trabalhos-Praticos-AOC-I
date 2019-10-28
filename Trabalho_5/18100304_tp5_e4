@@ -1,0 +1,24 @@
+.text
+ori $t0, $zero, 90
+#testar temperatura <20, fora
+#testar temperatura >40. temperatura <60, fora
+#testar temperatura >80, fora.
+#senão, tá dentro.
+ori $t2, $zero, 40 #auxiliar
+ori $t3, $zero, 1 #t3 guarda o auxiliar 1
+
+slti $t1, $t0, 20 #verifica se temp <20 
+beq $t1, $t3, fora #se temp é <20, está fora do intervalo
+slti $t1, $0, 60 #se é <60, testarse é maior que 40
+slt $t1, $t2, $t0 #se a temperatura é maior que 40 e menor que 60
+beq $t1, $t3, fora #vai pra fora
+
+ori $t2, $zero, 80 #atualiza auxiliar
+slt $t1, $t2, $t0 #se a temperatura é maior que 80
+beq $t1, $t3, fora #se temp é >80, está fora do intervalo
+
+ori $t1, $zero, 1 #se chegou até aqui é porque está no intervalo
+j fim
+
+fora: or $t1, $zero, $zero #aqui está fora da 
+fim : or $t5, $t5, $t5

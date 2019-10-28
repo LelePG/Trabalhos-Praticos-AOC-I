@@ -1,0 +1,21 @@
+.data
+x: .word 5
+y: .space 4
+
+.text
+lui $t0, 0x1001
+lw $t1, 0($t0)#t1 é o valor de referência
+or $t2, $zero, $zero #contador
+or $t3, $zero, $zero #acumulador
+
+or $t4, $zero, $zero#n-1
+ori $t5, $zero, 1#n
+
+loop: beq  $t2, $t1, fim#enquanto o contador é diferente do x
+add $t3, $t4, $t5 #acumulador = n+(n-1)
+or $t4, $zero, $t5 #n-1 vira n
+or $t5, $zero, $t3 # e n vira o valor do acumulador
+addi $t2, $t2, 1 #incrementa o contador
+j loop #volta prot este da condição
+
+fim: sw $t5, 4($t0)

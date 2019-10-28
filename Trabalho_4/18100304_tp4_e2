@@ -1,0 +1,20 @@
+.data
+a: .word 3
+b: .space 4
+
+.text
+lui $t0, 0x1001
+lw $t1, 3($t0)#t1 guarda a
+ori $t2, $zero, 9#t2 é o auxiliar
+mult $t1, $t2
+mflo $t3 #t3 monta o resultado
+addi $t2, $zero, -5
+add $t3 ,$t3, $t2
+mult $t1, $t3
+mflo $t3 #t1 tem (9a -5) A
+addi $t2, $zero, 7
+add $t3 ,$t3, $t2
+mult $t1, $t3
+mflo $t3 #t1 tem (9a -5) A )7a
+addi $t3, $t3, 15
+sw $t3, 4($t0)

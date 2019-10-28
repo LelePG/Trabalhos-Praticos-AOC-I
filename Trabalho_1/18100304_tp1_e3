@@ -1,0 +1,21 @@
+
+ori $t1, $zero, 0x01
+or $t2, $t1, $zero
+sll $t1, $t1, 1
+or $t2, $t1, $t2
+sll $t1, $t1, 1
+or $t2, $t1, $t2
+sll $t1, $t1, 1
+or $t2, $t1, $t2 #f em t2
+
+or $t1, $zero, $t2 #copia t2 pra t1
+sll $t1,$t1, 4
+or $t1, $t1,$t2
+
+or $t2, $zero, $t1 #copia t1 pra t2
+sll $t1,$t1, 8
+or $t1, $t1,$t2
+
+or $t2, $zero, $t1 #copia t1 pra t2
+sll $t1,$t1, 16
+or $t1, $t1,$t2

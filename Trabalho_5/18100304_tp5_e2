@@ -1,0 +1,15 @@
+.data 
+y: .space 4
+
+.text
+ori $t1, $zero, 1#contador
+ori $t2, $zero, 333#teste
+or $t3, $zero, $zero#soma
+
+loop: beq $t1, $t2, fim#se t1 é igual t2, sai do programa
+add $t3, $t3, $t1#atualiza t3
+addi $t1, $t1, 1#t1++
+j loop
+
+fim: lui $t0, 0x1001
+sw $t3, 0($t0)

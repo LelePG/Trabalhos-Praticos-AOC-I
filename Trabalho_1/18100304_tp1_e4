@@ -1,0 +1,38 @@
+
+ori $t1, $zero, 0x12345678
+srl $t2, $t1, 28
+sll $t1, $t1, 4
+
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,4 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino
+
+sll $t1, $t1, 4
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,8 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino
+
+sll $t1, $t1, 4
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,12 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino
+
+sll $t1, $t1, 4
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,16 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino
+
+sll $t1, $t1, 4
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,20 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino
+
+sll $t1, $t1, 4
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,24 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino
+
+sll $t1, $t1, 4
+srl $t3, $t1, 28 #desloca o base e copia pro auxiliar
+sll $t3, $t3,28 #desloca o auxiliar
+or $t2, $t2, $t3 #faz um or no destino

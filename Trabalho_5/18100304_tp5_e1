@@ -1,0 +1,15 @@
+.data
+a: .half 30
+b: .half 5
+y: .space 4
+
+.text
+lui $t0, 0x1001
+lh $t1, 0($t0)
+lh $t2, 2($t0)
+
+ beq $t1, $t2, divisao #se é igual faço a divisão
+ mult $t1, $t2#faz a multiplicação se for diferente
+ j salva #pula pra salvar o valor de low
+ divisao: div $t1, $t2 
+ salva:  mflo $t2

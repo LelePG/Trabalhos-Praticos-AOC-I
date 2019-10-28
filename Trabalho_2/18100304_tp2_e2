@@ -1,0 +1,3 @@
+.text
+ori $t7, $t0, 0x2
+sll $t7,$t7,5

@@ -1,0 +1,16 @@
+.text
+addi $t1,$zero,-4
+#quociente em t2 e resto em t3
+#y=(9x+7)/(2x+8)
+sra $t5,$t2,2#2x
+addi $t5, $t5,8#+8
+
+ori $t6,$zero,9
+mult $t6, $t1#9x
+mfhi $t7
+mflo $t8
+addi $t8,$t8,7
+
+div $t8, $t5
+mfhi $t3
+mflo $t2

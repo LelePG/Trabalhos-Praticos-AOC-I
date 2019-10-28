@@ -1,0 +1,28 @@
+.data
+a: .word 3
+b: .word 5
+c: .space 4
+
+.text
+lui $t0, 0x1001
+lw $t1, 4($t0)#t1 guarda a
+lw $t2, 8($t0)#t2 guarda b
+mult $t1 $t2
+mflo $t3
+addi $t4, $zero, 32#t4 é auxiliar
+mult $t3 $t4
+mflo $t3 #t3 guarda 32 ab
+or $t4, $zero, $t1
+sll $t4, $t4, 2
+add $t4,$t4, $t1#t4 +3a
+nor $t4, $t4, $t4
+addi $t4, $t4, 1 #t4 guarda -3a
+add $t3, $t3, $t4 #t3 guarda 32ab - 3a
+or $t4, $zero, $t2
+sll $t4, $t4, 4#4b
+add $t4, $t4, $t2 #5b
+add $t4, $t4, $t2 #6b
+add $t4, $t4, $t2 #7b
+add $t3,$t3, $t4#32ab -3a +7b
+addi $t3, $t3, -13
+sw $t3, 12($t0)

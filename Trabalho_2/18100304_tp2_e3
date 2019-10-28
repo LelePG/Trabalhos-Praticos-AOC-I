@@ -1,0 +1,9 @@
+.text
+ori $t0,$t0, 0x7000
+sll $t0,$t0,16
+add $t0,$t0,$t0
+
+#o resultado é 0xe0000000, em completento de dois, este número está correto, pois a condição de 
+#overflow não é satisfeita. Se trocarmos o addu por add, haverá overflow já que o último bit, onde se encontra o
+#resultado será o bit de sinal, o que limita pela metade o valor que pode ser representado e deixa 
+#o valor 0xe0000000 fora de escopo.

@@ -1,0 +1,8 @@
+.text
+addi $t1, $zero, 140
+addi $t2, $zero, 2
+mult $t1 $t2
+mfhi $t3
+sra $t3, $t3, 1
+mflo $t4
+sra $t4, $t4, 1

@@ -1,0 +1,32 @@
+.text
+ori $t7, $zero, 256#1
+ori $t8, $zero, 4096
+mult $t7,$t8
+mfhi $t1
+mflo $t2
+
+addi $t7, $zero, -4095#2
+ori $t8, $zero, 4096
+mult $t7,$t8
+mfhi $t3
+mflo $t4
+
+ori $t7, $zero, 65280#3
+addi $t8, $zero, -1
+mult $t7,$t8
+mfhi $t5
+mflo $t6
+
+ori $t7, $zero, 32768#4
+ori $t8, $zero, 4096
+mult $t7,$t8
+mfhi $t7
+mflo $t8
+
+# Operando            1256 -4095 65280 32768
+# Bits Significativos 0x00000100 0xfffff001 0x0000ff00 0x00008000
+# Operando 2         4096 4095 -1 4096
+# Bits Significativos 0x00001000 0x00001000 0xffffffff 0x00001000
+# Produto(alta)   0x00000000 0xffffffff 0xffffffff 0x00000000   
+# Produto(baixa)  0x00100000 0x00100000 0x00100000 0x00100000
+# Bits Significativos, de onde?

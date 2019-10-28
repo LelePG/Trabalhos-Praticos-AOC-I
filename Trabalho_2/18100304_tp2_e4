@@ -1,0 +1,18 @@
+.text
+ori $t1,$t0, 1 #preenche x,y e z
+ori $t2,$t0, 2
+ori $t3,$t0, 3
+
+sll $t1, $t1, 2 #multiplica x por 4
+sll $t2,$t2, 1 #multiplica y por 2
+
+add $t4,$t3,$t3 #t4 = 2z
+add $t3,$t4,$t3 #t3 = z +2z
+
+or $t7, $t0, $t1 #resultado = 4x
+
+nor $t2, $t2, $t2#y em complemento de dois
+addi $t2,$t2,1
+
+add $t7, $t7, $t2 #resultado = 4x-2y
+add $t7,$t7,$t3 #resultado = 4x-2y+3z

@@ -1,0 +1,48 @@
+#(-a)x)+b)x)-c)x) + d)x -e
+.data
+a: .word 3
+b: .word 7
+c: .word 5
+d: .word -2
+e: .word 8
+x: .word 4
+y: .space 4
+
+.text
+lui $t0, 0x1001
+lw $t0, 3($t0)
+lui $t1, 0x1001
+lw $t1, 7($t1)
+lui $t2, 0x1001
+lw $t2, 5($t2)
+lui $t3, 0x1001
+lw $t3, -2($t3)
+lui $t4, 0x1001
+lw $t4, 8($t4)
+lui $t5, 0x1001
+lw $t5, 4($t5)
+#t0 = a, t1 =b, t2 =c ,t3 = d, t4 = e, t5 = x
+#t7 guarda o resultado e #t6 é o auxiliar
+or $t6, $zero $t0
+nor $t6, $t6, $t6
+addi $t6, $t6, 1
+mult  $t6, $t0
+mflo $t7
+add $t7, $t7, $t1
+mult $t7, $t5
+
+or $t6, $t2,$zero
+nor $t6, $t6, $t6
+addi $t6, $t6, 1
+add $t7, $t7, $t6
+mult $t7, $t5
+mflo $t7
+
+add $t7, $t7, $t3
+mult $t7, $t5
+mflo $t7 
+
+or $t6, $t4,$zero
+nor $t6, $t6, $t6
+addi $t6, $t6, 1
+add $t7, $t7, $t6

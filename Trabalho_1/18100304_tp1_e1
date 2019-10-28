@@ -1,0 +1,16 @@
+.text
+ori $t7, $zero, 0xd
+sll $t7, $t7, 4
+ori $t7, $t7, 0Xe
+sll $t7, $t7, 4
+ori $t7, $t7, 0Xc
+sll $t7, $t7, 4
+ori $t7, $t7, 0Xa
+sll $t7, $t7, 4
+ori $t7, $t7, 0Xd
+sll $t7, $t7, 4
+ori $t7, $t7, 0Xa
+sll $t7, $t7, 4
+ori $t7, $t7, 0X7
+sll $t7, $t7, 4
+ori $t7, $t7, 0X0
