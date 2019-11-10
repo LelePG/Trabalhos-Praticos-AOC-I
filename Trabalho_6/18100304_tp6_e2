@@ -1,0 +1,25 @@
+#N é o valor lido da memória. I varia de 0 até n , sendo n sempre constante
+#o a última intereção é com n incluso ou não na conta? Se não entra, tá funcionando
+.data 
+n: .word 3
+resultado: .space 4
+
+.text
+lui $t0 0x1001 #t0 guarda o início da memória
+addi $t1, $zero, 0 #t1 é meu contador i
+addi $t2,$zero, 2 #t2 é a constante 2
+lw $t3, 0($t0) #t3 a varivável n
+addi $t5, $zero, 1 #guarda o resultaod final
+loop: bne $t1, $t3, dentroLoop # quando o contador for igual ao valor de n, sai do programa
+or $t0,$t0,$t0 #pra resolver delayed branch
+j fim
+or $t0,$t0,$t0 #pra resolver delayed branch
+dentroLoop: div $t1,$t2
+mflo $t4 #t4 guarda a divisão inteira anterior
+add $t4, $t4, $t3 #t4 recebe a soma dos parênteses (n+i/2)
+mult $t4, $t5 #multiplica o resultado da parcela atual pelo resultado anterior das outras iterações
+mflo $t5 #armazena o resultado novamente no registrador t5
+addi $t1, $t1, 1 #incrementa o contador t1
+j loop #volta pro inicio do loop pra testar a condição de entrada
+or $t0,$t0,$t0 #pra resolver delayed branch
+fim: sw $t5, 4($t0)#guarda o valor final na memória

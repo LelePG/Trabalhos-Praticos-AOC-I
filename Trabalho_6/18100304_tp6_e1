@@ -1,0 +1,35 @@
+.data 
+ vetor: .space 32
+ #tamanho: .word 8
+ 
+.text
+lui $t0, 0x1001 #pra marcar o início da memória
+and $t1,$t1,$zero#t1 é meu contador (=0)
+addi $t2,$zero, 2 #t2 é a minha constante 2
+addi $t3,$zero,8#lw $t3, ($t0)#tamanho do vetor
+#aqui começa o loop
+loop: bne $t1, $t3, dentroFor
+or $t0,$t0,$t0 #pra resolver delayed branch
+j end
+dentroFor: div $t1, $t2
+mfhi $t4 #t4 armazena o resto da divisão
+bne $t4,$zero, else #se o resto da divisão é igual a zero, executa o código abaixo, senão pula para o else
+or $t0,$t0,$t0 #pra resolver delayed branch
+sll $t5, $t1, 1 #multiplica o contador por 2
+sw $t5, 0($t0) #guarda esse valor na memória
+addi $t0, $t0, 4 #incrementa a posição de memória que vou pegar da próxima vez.
+addi $t1,$t1,1#incrementa o contador
+j loop
+else:
+lw $t5, 0($t0)#armazena vetor[i]
+lw $t6, -4($t0)#armazena vetor[i-1]
+add $t5,$t5,$t6 #soma vetor[i] e vetor [i-1]
+sw $t5, 0($t0) #guarda esse valor na memória
+addi $t0, $t0, 4 #incrementa a posição de memória que vou pegar da próxima vez.
+addi $t1,$t1,1#incrementa o contador
+j loop
+end: or $t0,$t0,$t0
+
+
+
+ 

@@ -1,0 +1,19 @@
+.data
+.word 5
+.space 4
+
+.text
+lui $t0, 0x1001 # to guarda o início do vetor
+lw $t1, 0($t0) #o valor que eu quero calcular o fatorial
+addi $t2, $zero, 1 #varivável para armazenar o resultado
+
+loop: bne $t1, $zero, fatorial #se o registrador onde guardo o número da multiplicação for diferente de zero, eu faço a multiplicação, senão acabo a execução
+or $t0,$t0,$t0 #pra resolver delayed branch
+j fim
+or $t0,$t0,$t0 #pra resolver delayed branch
+fatorial: mult $t1, $t2 #multiplica o número atual pelo resultado parcial
+mflo $t2 #guarda o resultado parcial
+addi $t1, $t1 , -1 #decrementa o valor do contador
+j loop
+or $t0,$t0,$t0 #pra resolver delayed branch
+fim: sw $t2,4($t0)
