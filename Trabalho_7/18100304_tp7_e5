@@ -1,0 +1,24 @@
+.data
+tamanho: .word 7
+vetor1 : .word -30,-23,56,-43,72,-18,71
+vetor2 : .word 45, 23, 21, -23, -82, 0, 69
+vetor3 : .word 0,0,0,0,0,0,0
+.text
+la $t0, tamanho
+la $t1, vetor1
+la $t2, vetor2
+la $t3, vetor3
+#t1, t2 e t3 são apenas os endereços
+lw $t5, 0($t0) #valor do contador
+loop: beqz $t5, fim #se meu contador chegar a zero, acaba o programa
+lw $t6, 0($t1) #valor do primeiro vetor
+lw $t7, 0($t2) #valor do segundo vetor
+add $t0, $t6, $t7 #soma os dois
+sw $t0, 0($t3) #guarda no terceiro
+addi $t5, $t5, -1 #decrementa contador
+#incrementa posição dos vetores 1,2 e 3
+addi $t1, $t1, 4 
+addi $t2, $t2, 4
+addi $t3, $t3, 4
+j loop #volta pro laço
+fim: nop

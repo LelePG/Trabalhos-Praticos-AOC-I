@@ -1,0 +1,29 @@
+.data 
+string: .asciiz "meu professor é o melhor"
+
+.text
+lui $t0, 0x1001 #t0 guarda a posição inicial da memória, vou usar ele como contador
+move $a0, $t0 #posição a partir da qual quero imprimir minha string depois
+li $v0,4 # código pra imprimir string 
+
+lb $t2, 0($t0) #assumindo que nunca vai começar com espaço...
+addi $t2, $t2, -32 #diminui 32 pra deixar a letra maiúscula
+sb $t2,0($t0) #guarda o valor 
+addi $t0, $t0, 1 #incrementa o contador
+
+loop: lb $t2, 0($t0) #t2 marca a letra atual
+lb $t3, 1($t0)  #t3 marca a próxima letra
+#se t2 é um espaço e se t3 é uma letra, troca t3
+beq $t2, 32, verificarProxima
+incrementa: addi $t0, $t0, 1 #incrementa o contador
+beqz $t2, fim
+j loop
+
+verificarProxima: beq $t3, 32, incrementa #se eu achar um espaço, só incremento o contador
+beqz $t3, fim #se eu encontrar um 0 cheguei no fim da string 
+#se não, eu diminuo 32 no t3
+addi $t3, $t3, -32
+sb $t3, 1($t0)
+addi $t0,$t0,2 #posso incrementar dois porque incrementar só um levaria para o coiso que eu acabei de alterar
+j loop
+fim: syscall

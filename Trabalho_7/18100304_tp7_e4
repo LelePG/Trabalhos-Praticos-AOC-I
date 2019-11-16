@@ -1,0 +1,16 @@
+.data
+.word 1,2,3,4,5
+
+.text #inverter o primeiro com o quinto, o segundo com o quarto
+lui $t0, 0x1001
+lw $t1, 16($t0) #pega o quinto elemento
+lw $t2, 0($t0) #pega o primeiro elemento
+sw $t1, 0($t0) #guarda o quinto elemento na primera posição
+sw $t2, 16($t0) #guarda o primeio elemento na quinta posição
+
+lw $t1, 12($t0) #pega o quarto elemento
+lw $t2, 4($t0) #pega o segundo elemento
+sw $t1, 4($t0) #guarda o quarto elemento na segunda posição
+sw $t2, 12($t0) #guarda o segundo elemento na quarta posição
+
+#É mais fácil do que fazer por loop

@@ -1,0 +1,24 @@
+.data 
+string: .asciiz "Eu amo muito meu professor de AOC-I."
+
+.text
+lui $t0, 0x1001 #t0 guarda a posição inicial da memória, vou usar ele como contador
+move $a0, $t0 #posição a partir da qual quero imprimir minha string depois
+li $v0,4 # código pra imprimir string 
+
+loop: lb $t2, 0($t0)
+beq $t2, 0x20, desloca #se eu encontro um espaço vou precisar descolar
+beqz $t2, fim #se eu tiver zero em t2 aqui, significa que cheguei no fim da string
+addi $t0, $t0, 1 #incrementa o meu contador
+j loop
+
+desloca: beqz $t2, incrementa #se t2 é zero, ou seja, cheguei no final da string, volta pro loop anterior pra chegar as posições de novo
+move $t1, $t0 #t1 guarda o conteúdo de t0 para seguir de certo ponto
+lb $t2,1($t1) # pego o valor da próxima posição
+sb $t2,0($t1) #e armazeno na posição anterior
+addi $t1, $t1, 1 #incrementa o meu contador
+
+incrementa: addi $t0, $t0, 1 #incrementa t0 pra seguir de onde eu parei lá em cima
+j loop
+
+fim: syscall
