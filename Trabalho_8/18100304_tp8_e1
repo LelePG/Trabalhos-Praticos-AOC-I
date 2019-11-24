@@ -1,0 +1,38 @@
+.data 
+inicio: .space 4500#número qualquer pra deixar os valores no inicio
+menu: .asciiz "\nInsira o número de quilômetros e litros de gasolina consumidos.\nDigite 0 para sair.\n"
+resultado: .asciiz "km/l : "
+
+.text
+la $t0, menu #guarda o inicio da minha string menu
+la $t7, resultado
+lui $t5, 0x1001
+imprimeMenu:
+	li $v0, 4 #código para escrever a string
+	move $a0, $t0 # coloca o endereço da string para ser impresso
+	syscall
+	li $v0, 5 #Código para ler um inteiro da entrada
+	syscall # Lê o primeiro número km
+	move $t1, $v0 #coloca o número digitado em t1
+	beq $t1, $zero, fim #se o número digitado é zero, sai do programa
+	li $v0, 5 #Código para ler um inteiro da entrada
+	syscall# Lê o segundo número, litros
+	move $t2, $v0 #coloca o número digitado em t2
+	beq $t2, $zero, fim #se o número digitado é zero, sai do programa
+	div $t1, $t2 #acha o valor de quilometros por litro
+	mflo $t3 #valor da divisão em t3
+	
+	li $v0, 4 #código para escrever a string
+	move $a0, $t7 # coloca o endereço da string km por litro pra ser impresso
+	syscall #imprime
+	li $v0, 1 #código para escrever o inteiro (resultado da divisão)
+	move $a0, $t3 # t3 que guardava o resultado da divisão
+	syscall #imprime
+	
+	
+	sw $t3, 0($t5) #t5 armazena o valor atual da memória, onde eu guardo o valor que li
+	addi $t5, $t5, 4 #atualiza o valor de t5
+	j imprimeMenu #volta pro inicio do loop
+	
+	
+fim : nop

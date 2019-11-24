@@ -1,0 +1,32 @@
+.data
+.asciiz "A média é: "
+.text
+#ler três valores do usuário...
+li $v0,5 # código para ler um inteiro
+syscall
+move $a0, $v0 #salva o primeiro em a0, argumento da subrotina
+li $v0,5 # código para ler um inteiro
+syscall
+move $a1, $v0 #salva o segundo em a1, argumento da subrotina
+li $v0,5 # código para ler um inteiro
+syscall
+move $a2, $v0 #salva o terceiro em a2, argumento da subrotina
+jal media #vai pra subrotina de média
+#o retorno ficava armazenado em e agora está em
+move $t0, $v0 #garda o retorno
+li $v0,4 # código para imprimir a string
+lui $a0, 0x1001 #guarda o endereço da string
+syscall#imprime a string
+li $v0,1 #código pra imprimir o inteiro
+move $a0, $t0 #coloca o dado que quero imprimir em a0
+syscall #imprime
+j fim# jump para não entrar na função media
+media: 
+li $t1, 3 #constante 3 pra dividir a soma depois
+add $a0, $a0, $a1 #soma a0 e a1
+add $a0, $a0, $a2 #soma o resultado com a2
+div $a0, $t1 #divide o resultado por três, e temos a média
+mflo $v0 #v0 é retorno da função
+jr $ra #volta.
+fim : li $v0, 10
+syscall #encerra o programa
