@@ -1,0 +1,65 @@
+.data
+texto: .asciiz "um dois três quatro cinco seis"
+pAceita: .asciiz "A palavra foi encontrada."
+pRejeita: .asciiz "A palavra não foi encontrada."
+pErrada: .asciiz "Você digitou uma palavra inválida."
+palavra: .space 20
+.text 
+
+li $v0, 8 #código para ler uma string
+#Endereço onde vai ser armazenada a palavra se passa em a0 e o tamanho em a1
+la $a0, palavra #onde guardar a palavra
+li $a1, 20#tamanho da palavra
+syscall #Lê a string
+la $t0, texto #t0 guarda o início do texto.
+la $t1, palavra #t1 guarda o início da palavra
+#t3,t4 e t5 são os contadores da função, inicializo eles aqui. Pra não dar problema.
+
+li $t3, 1
+li $t4, 1
+li $t5, 1
+#primeiro testar se a palavra não é a primeira
+identifica: beqz $t3, rejeita #se t3 for zero, cheguei no fim do texto. Sai do programa
+lb $t3, 0($t0) #pega as letras do texto
+lb $t4, 0($t1) #pega as letras da palavra
+beq $t3, $t4, MesmaLetra #se as letras são iguais...
+beq $t3, 0x20, aceita # se eu encontrar um espaço no texto, já achei a palavra
+#se chegar aqui, tem outra letra que não é igual, então procuro o próximo espaço.
+addi $t0, $t0, 1 #incrementa as o contador pra voltar pro loop não com o espaço, mas com o que vem depois
+j achaEspaço
+
+MesmaLetra: #se as letras foram iguais...
+#incremento os dois contadores e comparo de novo. T0 e T1 são os endereços. T3 e T4, as letras
+addi $t0, $t0, 1 #texto 
+addi $t1, $t1, 1 #palavra
+lb $t3, 0($t0) #pega as letras do texto
+lb $t4, 0($t1) #pega as letras da palavra
+beq $t4, 0xa, aceita #O último caracter da string de input é o \n, 0xa. Se t4, que é a letra da palavra, for \n, cheguei no fim da palavra, então ela está no texto
+beq $t4, 0x20, palavraErrada #se eu achar um espaço escrito na palavra, ela é rejeitada
+beq $t4, $t3 MesmaLetra #se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
+#se chegou até aqui, a palavra não está na sequência certa.
+beq $t3, 0x20, rejeita #se tem um espaço no texto e não tem na palavra, a palavra é rejeitada
+la $t1, palavra #reseta t1, t0 não precisa resetar porque se a palavra não estava aqui não vai estar pra trás
+j achaEspaço # acho um espaço pra poder seguir procurando a palavra
+
+achaEspaço: beq $t3, 0x20, identifica # 20 é o espaço em hexa. Se for um espaço, verifica as letras
+beqz $t3, rejeita #caso o texto termine
+addi $t0, $t0, 1 #incrementa as o contador de letras do texto
+lb $t3, 0($t0) #pega a letra do texto
+
+j achaEspaço #volta pro loop
+
+rejeita: la $a0, pRejeita #Só define o texto que vou escrever
+j fim
+
+palavraErrada: la $a0, pErrada
+j fim
+
+aceita: la $a0, pAceita #Só define o texto que vou escrever
+j fim
+
+fim:
+li $v0, 4
+syscall #imprime a string de aceita ou rejeita definida anteriormente
+li $v0, 10#código para terminar a execução
+syscall#termina a execução.
