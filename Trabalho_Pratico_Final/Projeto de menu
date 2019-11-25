@@ -1,0 +1,66 @@
+.data
+bemvindo: .asciiz "BEM VINDO AO BUSCADOR DE PALAVRAS!\n"
+menu: .asciiz "\nSelecione a ação:\n1)Buscar palavra\n2)Contar número de ocorrências de palavra\n3)Buscar trecho de texto\n4)Contar número de ocorrências de trecho de texto\n5)Buscar palavra insenvível a case\n6)Imprimir o texto\n7)Sair\n"
+texto: .asciiz "um dois tres quatro cinco"
+#frases axuliares das subrotinas
+sInvalido: .asciiz "Opção inválida\n"
+sAceita: .asciiz "A palavra foi encontrada.\n"
+sRejeita: .asciiz "A palavra não foi encontrada.\n"
+sOcorrencias1: .asciiz "Foram encontradas "
+sOcorrencias2: .asciiz " ocorrências da palavra.\n"
+.text
+#imprimir bem vindo
+la $a0, bemvindo
+li $v0, 4
+syscall
+loop: #o loop sempre vai começar imprimindo o menu
+la $a0, menu
+li $v0, 4
+syscall
+#ler um número, interpretar esse número
+li $v0, 5
+syscall 
+move $t7, $v0 #salva o número que vamos trabalhar em t7.
+#interpretar o valor com beqs. O beq vai levar pra um rótulo onde chama a subrotina. Não dá pra botar beq $t7, 1, jal busca... então tem que mandar pra um rótulo
+beq $t7, 1 , op1
+beq $t7, 2 , op2
+beq $t7, 3 , op3
+beq $t7, 4 , op4
+beq $t7, 5 , op5
+beq $t7, 6 , op6
+beq $t7, 7 , sair
+j invalido #se o usuário digitou um número que não é nenhum desses, é um número inválido, exibe mensagem
+#fazer a operação e voltar para o menu
+op1: #jal BuscaPalavra
+j loop
+op2: #jal CoPalavra
+j loop
+op3: #jal BuscaTrecho
+j loop
+op4: #jal CoTrecho
+j loop
+op5: #jal SenCase
+j loop
+op6: jal Imprime #imprimir o texto
+j loop
+
+#talvez fazer uma sobrotina pra ler a palavra...
+#BuscaPalavra: jr $ra
+#CoPalavra: jr $ra
+#BuscaTrecho: jr $ra
+#CoTrecho: jr $ra
+#SenCase: jr $ra
+
+sair: #fim da execução
+li $v0, 10#código para terminar a execução
+syscall#termina a execução do programa.
+
+Imprime: la $a0, texto #imprime o texto
+li $v0, 4
+syscall 
+jr $ra #volta pro menu
+
+invalido: la $a0, sInvalido #imprime mensagem de input inválido
+li $v0, 4
+syscall 
+j loop #volta pro menu

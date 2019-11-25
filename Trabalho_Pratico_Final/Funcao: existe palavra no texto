@@ -14,7 +14,6 @@ syscall #Lê a string
 la $t0, texto #t0 guarda o início do texto.
 la $t1, palavra #t1 guarda o início da palavra
 #t3,t4 e t5 são os contadores da função, inicializo eles aqui. Pra não dar problema.
-
 li $t3, 1
 li $t4, 1
 li $t5, 1
@@ -23,7 +22,7 @@ identifica: beqz $t3, rejeita #se t3 for zero, cheguei no fim do texto. Sai do p
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
 beq $t3, $t4, MesmaLetra #se as letras são iguais...
-beq $t3, 0x20, aceita # se eu encontrar um espaço no texto, já achei a palavra
+beq $t3, 0x20, aceita # se eu encontrar um espaço no texto, já achei o trecho
 #se chegar aqui, tem outra letra que não é igual, então procuro o próximo espaço.
 addi $t0, $t0, 1 #incrementa as o contador pra voltar pro loop não com o espaço, mas com o que vem depois
 j achaEspaço
@@ -52,7 +51,7 @@ j achaEspaço #volta pro loop
 rejeita: la $a0, pRejeita #Só define o texto que vou escrever
 j fim
 
-palavraErrada: la $a0, pErrada
+palavraErrada: la $a0, pErrada #Só define o texto que vou escrever
 j fim
 
 aceita: la $a0, pAceita #Só define o texto que vou escrever
@@ -60,6 +59,6 @@ j fim
 
 fim:
 li $v0, 4
-syscall #imprime a string de aceita ou rejeita definida anteriormente
+syscall #imprime a string definida anteriormente
 li $v0, 10#código para terminar a execução
 syscall#termina a execução.

@@ -1,0 +1,64 @@
+.data
+texto: .asciiz "um dois três quatro um dois um três um cinco seis"
+fim1: .asciiz "Foram encontradas "
+fim2: .asciiz " ocorrências da palavra."
+palavra: .space 20
+.text 
+
+li $v0, 8 #código para ler uma string
+#Endereço onde vai ser armazenada a palavra se passa em a0 e o tamanho em a1
+la $a0, palavra #onde guardar a palavra
+li $a1, 20#tamanho da palavra
+syscall #Lê a string
+la $t0, texto #t0 guarda o início do texto.
+la $t1, palavra #t1 guarda o início da palavra
+#t3,t4 são os contadores da função, inicializo eles aqui. Pra não dar problema.
+li $t3, 1 # letras do texto
+li $t4, 1 #letras da palavra
+#t5 é o contador de ocorrências, não preciso iniciar ele.
+
+loop: beqz $t3, fim #se t3, contador de letras do texto, for zero, cheguei no fim do texto. Sai do programa
+lb $t3, 0($t0) #pega as letras do texto
+lb $t4, 0($t1) #pega as letras da palavra
+beq $t3, $t4, MesmaLetra #se as letras são iguais...
+#senão, incrementa o contador do texto
+addi $t0, $t0, 1
+j loop # e volta pro loop pra comparar a próxima letra.  
+
+MesmaLetra: #se as letras foram iguais...
+#incremento os dois contadores e comparo de novo. T0 e T1 são os índices. T3 e T4, as letras
+addi $t0, $t0, 1 #texto 
+addi $t1, $t1, 1 #palavra
+lb $t3, 0($t0) #pega as letras do texto
+lb $t4, 0($t1) #pega as letras da palavra
+beq $t4, 0xa, incrementa #O último caracter da string de input é o \n, 0xa. Se t4, que é a letra da palavra, for \n, cheguei no fim da palavra, então encontrei ela no texto
+beq $t3, 0x20, fim #se a palavra tiver um espaço, não é considerada palavra e a contagem de ocorrências é zero
+beq $t4, $t3 MesmaLetra #se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
+#se chegou até aqui, a palavra não está na sequência certa.
+#posso procurar pelo próximo espaço e então voltar pro loop pra tentar de novo
+la $t1, palavra #reseta t1, t0 não precisa resetar porque se a palavra não estava aqui não vai estar pra trás
+j achaEspaço #assim, volto a verificar a partir do próximo espaço.
+
+achaEspaço: beq $t3, 0x20, loop # 20 é o espaço em hexa. Se for um espaço, volta a ver se as letras são iguais
+beqz $t3, fim #caso o texto termine
+addi $t0, $t0, 1 #incrementa as o contador de letras do texto
+lb $t3, 0($t0) #pega a letra do texto pra fazer a comparação
+j achaEspaço
+
+incrementa: addi $t5, $t5, 1 #incrementa o contador de ocorrências
+la $t1, palavra # reseta a palavra, pra usar ela pra encontrar outra
+j loop #volta pro loop pra continuar contando
+
+fim:
+li $v0, 4 # imprimir string
+la $a0, fim1 #primeira parte do texto
+syscall #imprime primeira parte
+li $v0, 1 #pra imprimir um inteiro
+move $a0, $t5 #copia o conteúdo do contador pro a0 
+syscall #imprime número
+li $v0, 4 # imprimir string
+la $a0, fim2 #segunda parte do texto
+syscall #imprime segunda parte
+#finaliza
+li $v0, 10#código para terminar a execução
+syscall#termina a execução.
