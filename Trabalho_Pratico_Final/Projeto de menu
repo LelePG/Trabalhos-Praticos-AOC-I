@@ -1,9 +1,9 @@
 .data
 bemvindo: .asciiz "BEM VINDO AO BUSCADOR DE PALAVRAS!\n"
-menu: .asciiz "\nSelecione a opcao desejada:\n1)Buscar palavra\n2)Contar numero de ocorrencias de palavra\n3)Buscar trecho de texto\n4)Contar numero de ocorrencias de trecho de texto\n5)Buscar palavra sensivel a case\n6)Imprimir o texto\n7)Sair\n"
+menu: .asciiz "\nSelecione a opcao desejada:\n1)Buscar palavra\n2)Contar numero de ocorrencias de palavra\n3)Buscar trecho de texto\n4)Contar numero de ocorrencias de trecho de texto\n5)Buscar palavra insensivel a case\n6)Imprimir o texto\n7)Sair\n"
 texto: .asciiz "um dois tres quatro cinco seis um dois um dois um "
 #frases axuliares das subrotinas
-sInvalido: .asciiz "\nOpcao errada\n"
+sInvalido: .asciiz "\nOpcao inválida\n"
 pAceita: .asciiz "\nA palavra foi encontrada.\n"
 pRejeita: .asciiz "\nA palavra nao foi encontrada.\n"
 pATrecho: .asciiz "\nO trecho foi encontrado.\n"
@@ -40,8 +40,11 @@ j invalido # se o usuario digitou uma opcao que nao tem,  um numero invalido, ex
 # ------------------------------------------- BUSCA PALAVRA --------------------------------------------------------
 
 op1: 
-
 jal askWord
+la $a0, palavra #coloca a palavra como argumento da função
+jal palavraValida#chama a função para verificar se a palavra é válida ou não
+beqz $v0, palavraErrada #se eu tiver zero em v0, o retorno da minha função diz que a palavra não é valida, então nem testa nada. 
+#senão... segue a execução
 
 identifica: 
 beqz $t3, rejeita #se t3 for zero, cheguei no fim do texto. Sai do programa
@@ -49,9 +52,6 @@ lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
 beq $t3, $t4, MesmaLetra #se as letras são iguais...
 beq $t3, 0x20, aceita # se eu encontrar um espaço no texto, já achei o trecho
-
-# lb $t5, 1($t1)
-# beq $t5, 0x20, palavraErrada
 
 #se chegar aqui, tem outra letra que não é igual, então procuro o próximo espaço.
 addi $t0, $t0, 1 #incrementa as o contador pra voltar pro loop não com o espaço, mas com o que vem depois
@@ -64,7 +64,6 @@ addi $t1, $t1, 1 #palavra
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
 beq $t4, 0xa, verificaTexto #O último caracter da string de input é o \n, 0xa. Se t4, que é a letra da palavra, for \n, cheguei no fim da palavra, então ela está no texto
-beq $t4, 0x20, palavraErrada #se eu achar um espaço escrito na palavra, ela é rejeitada
 beq $t4, $t3 MesmaLetra #se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
 #se chegou até aqui, a palavra não está na sequência certa.
 beq $t3, $zero, rejeita #se tem um espaço no texto e não tem na palavra, a palavra é rejeitada
@@ -103,10 +102,14 @@ j loop
 # ------------------------------------ OCORRENCIA DA PALAVRA -----------------------------------------------------------------
 
 op2: 
-
 jal askWord
+#verifica o input
+la $a0, palavra #coloca a palavra como argumento da função
+jal palavraValida#chama a função para verificar se a palavra é válida ou não
+beqz $v0, palavraInvalida2# se a palavra não for válida
 
-looping: beqz $t3, fim2 # se t3, contador de letras do texto, for zero, cheguei no fim do texto. Sai do programa
+looping: 
+beqz $t3, fim2 # se t3, contador de letras do texto, for zero, cheguei no fim do texto. Sai do programa
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
 beq $t3, $t4, MesmaLetra2 #se as letras sao iguais...
@@ -121,14 +124,14 @@ addi $t1, $t1, 1 #palavra
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
 beq $t4, 0xa, verificaTexto2 #O último caracter da string de input é o \n, 0xa. Se t4, que é a letra da palavra, for \n, cheguei no fim da palavra, então encontrei ela no texto
-beq $t4, 0x20, palavraInvalida2 #se a palavra tiver um espaco, nao e considerada palavra e a contagem de ocorrencias e zero
 beq $t4, $t3 MesmaLetra2 #se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
 #se chegou até aqui, a palavra não está na sequência certa.
 #posso procurar pelo próximo espaço e então voltar pro loop pra tentar de novo
 la $t1, palavra #reseta t1, t0 não precisa resetar porque se a palavra não estava aqui não vai estar pra trás
 j achaEspaco2 #assim, volto a verificar a partir do próximo espaço.
 
-achaEspaco2: beq $t3, 0x20, espaco2 # 20 e o espaco em hexa. Se for um espaco, volta a ver se as letras sao iguais
+achaEspaco2: 
+beq $t3, 0x20, espaco2 # 20 e o espaco em hexa. Se for um espaco, volta a ver se as letras sao iguais
 beqz $t3, fim2 #caso o texto termine
 addi $t0, $t0, 1 #incrementa as o contador de letras do texto
 lb $t3, 0($t0) #pega a letra do texto pra fazer a comparação
@@ -143,7 +146,8 @@ beq $t3, $zero, fim2
 beq $t3, 0x20, incrementa2
 j achaEspaco2
 
-incrementa2: addi $t5, $t5, 1 #incrementa o contador de ocorrências
+incrementa2: 
+addi $t5, $t5, 1 #incrementa o contador de ocorrências
 la $t1, palavra # reseta a palavra, pra usar ela pra encontrar outra
 j espaco2 #volta pro loop pra continuar contando
 
@@ -166,37 +170,40 @@ syscall #imprime segunda parte
 
 finish:
 move $t5, $zero		# Reseta o valor do contador de ocorrencia
-
 j loop
 
 # ----------------------------- Busca trecho ----------------------------------
 
-op3: jal askWord
-loop3: beqz $t3, rejeita3 #se t3 for zero, cheguei no fim do texto. Sai do programa
+op3: 
+jal askWord
+loop3: 
+beqz $t3, rejeita3 #se t3 for zero, cheguei no fim do texto. Sai do programa
 beqz $t4, rejeita3 #se t4 for igual a zero, sai do programa.
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
-beq $t3, $t4, MesmaLetra3 #se as letras s�o iguais...
-#sen�o, incrementa o contador do texto
+beq $t3, $t4, MesmaLetra3 #se as letras são iguais...
+#sen�o, incrementa o contador do texto
 addi $t0, $t0, 1
-j loop3 # e volta pro loop pra comparar a pr�xima letra.  
+j loop3 # e volta pro loop pra comparar a próxima letra.  
 
 MesmaLetra3: #se as letras foram iguais...
-#incremento os dois contadores e comparo de novo. T0 e T1 s�o os endere�os. T3 e T4, as letras
+#incremento os dois contadores e comparo de novo. T0 e T1 sao os endereços. T3 e T4, as letras
 addi $t0, $t0, 1 #texto 
 addi $t1, $t1, 1 #palavra
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
-beq $t4, 0xa, aceita3 #O �ltimo caracter da string de input � o \n, 0xa. Se t4, que � a letra da palavra, for \n, cheguei no fim da palavra, ent�o ela est� no texto
+beq $t4, 0xa, aceita3 #O ultimo caracter da string de input eh o \n, 0xa. Se t4, que eh a letra da palavra, for \n, cheguei no fim da palavra, ent�o ela est� no texto
 beq $t4, $t3 MesmaLetra3 #se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
-#se chegou at� aqui, a palavra n�o est� na sequ�ncia certa.
-la $t1, palavra #reseta t1, t0 n�o precisa resetar porque se a palavra n�o estava aqui n�o vai estar pra tr�s
+#se chegou ateh aqui, a palavra nao esta na sequencia certa.
+la $t1, palavra #reseta t1, t0 nao precisa resetar porque se a palavra nao estava aqui nao vai estar pra tr�s
 j loop3
 
-rejeita3: la $a0, pRTrecho #S� define o texto que vou escrever
+rejeita3: 
+la $a0, pRTrecho #Soh define o texto que vou escrever
 j fim3
 
-aceita3: la $a0, pATrecho #S� define o texto que vou escrever
+aceita3: 
+la $a0, pATrecho #Soh define o texto que vou escrever
 j fim3
 
 fim3:
@@ -208,27 +215,29 @@ j loop
  
 op4: 
 jal askWord
-loop4: beqz $t3, fim4 #se t3, contador de letras do texto, for zero, cheguei no fim do texto. Sai do programa
+loop4: 
+beqz $t3, fim4 #se t3, contador de letras do texto, for zero, cheguei no fim do texto. Sai do programa
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
-beq $t3, $t4, MesmaLetra4 #se as letras s�o iguais...
-#sen�o, incrementa o contador do texto
+beq $t3, $t4, MesmaLetra4 #se as letras sao iguais...
+#senao, incrementa o contador do texto
 addi $t0, $t0, 1
-j loop4 # e volta pro loop pra comparar a pr�xima letra.  
+j loop4 # e volta pro loop pra comparar a proxima letra.  
 
 MesmaLetra4: #se as letras foram iguais...
-#incremento os dois contadores e comparo de novo. T0 e T1 s�o os endere�os. T3 e T4, as letras
+#incremento os dois contadores e comparo de novo. T0 e T1 sao os endereços. T3 e T4, as letras
 addi $t0, $t0, 1 #texto 
 addi $t1, $t1, 1 #palavra
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
-beq $t4, 0xa, incrementa4 #O �ltimo caracter da string de input � o \n, 0xa. Se t4, que � a letra da palavra, for \n, cheguei no fim da palavra, ent�o encontrei ela no texto
+beq $t4, 0xa, incrementa4 #O ultimo caracter da string de input eh o \n, 0xa. Se t4, que eh a letra da palavra, for \n, cheguei no fim da palavra, ent�o encontrei ela no texto
 beq $t4, $t3 MesmaLetra4 #se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
-#se chegou at� aqui, a palavra n�o est� na sequ�ncia certa.
-la $t1, palavra #reseta t1, t0 n�o precisa resetar porque se a palavra n�o estava aqui n�o vai estar pra tr�s
+#se chegou ateh aqui, a palavra nao esta na sequencia certa.
+la $t1, palavra #reseta t1, t0 nao precisa resetar porque se a palavra nao estava aqui nao vai estar pra tr�s
 j loop4
 
-incrementa4: addi $t5, $t5, 1 #incrementa o contador de ocorr�ncias
+incrementa4: 
+addi $t5, $t5, 1 #incrementa o contador de ocorrencias
 la $t1, palavra # reseta a palavra
 j loop4 #volta pro loop pra continuar contando
 
@@ -237,35 +246,38 @@ li $v0, 4 # imprimir string
 la $a0, sOcorrencias1 #primeira parte do texto
 syscall #imprime primeira parte
 li $v0, 1 #pra imprimir um inteiro
-move $a0, $t5 #copia o conte�do do contador pro a0 
-syscall #imprime n�mero
+move $a0, $t5 #copia o conteudo do contador pro a0 
+syscall #imprime numero
 li $v0, 4 # imprimir string
 la $a0, sOcorrencias2 #segunda parte do texto
 syscall #imprime segunda parte
 move $t5, $zero
 j loop
 
-
-op5: #jal SenCase
+ # ------------------------------ Palavra Insensível a Case--------------------------
+op5: 
 j loop
+
+ # ------------------------------ Imprimir texto --------------------------
 op6: jal Imprime #imprimir o texto
 j loop
-
+ # ------------------------------ Final da execução do programa --------------------------
 sair: #fim da execução
 li $v0, 10#código para terminar a execução
 syscall#termina a execução do programa.
+ # ------------------------------ SUBROTINAS --------------------------
 
 Imprime: la $a0, texto #imprime o texto
 li $v0, 4
 syscall 
 jr $ra #volta pro menu
 
-invalido: la $a0, sInvalido #imprime mensagem de input inválido
+invalido: la $a0, sInvalido #imprime mensagem de opção de menu inválida
 li $v0, 4
 syscall 
 j loop #volta pro menu
 
-askWord:
+askWord: #lê a palavra do usuário
 la $a0, digite
 li $v0, 4
 syscall
@@ -279,5 +291,17 @@ la $t1, palavra #t1 guarda o inicio da palavra
 #t3,t4 e t5 são os contadores da função, inicializo eles aqui. Pra não dar problema.
 li $t3, 1
 li $t4, 1
+jr $ra
 
+palavraValida:#verifica se a palavra tem espaço
+lb $t5, 0($a0)#pega a letra da palavra
+beq $t5, 0x20, retornaInvalido
+beq $t5, 0xa, retornaValida #se achar \n, cheguei no fim da palavra e ela é valida.
+addi $a0, $a0, 1
+j palavraValida
+retornaValida: li $v0, 1
+li $t5, 0 #reseta 0 t5 pra não dar problema
+jr $ra
+retornaInvalido: li $v0,0 #retorna zero se a palavra é inválida
+li $t5, 0 #reseta o t5 pra não dar problema
 jr $ra
