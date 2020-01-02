@@ -90,8 +90,8 @@ addi $t0, $t0, 1 # texto
 addi $t1, $t1, 1 # palavra
 lb $t3, 0($t0) # pega as letras do texto
 lb $t4, 0($t1) # pega as letras da palavra
-beq $t3, 0x2e, aceita#verifica se a palavra termina com um ponto
-beq $t3, 0x2c, aceita# se tiver uma vírgula
+beq $t3, 0x2e, verificaTexto#verifica se a palavra termina com um ponto
+beq $t3, 0x2c, verificaTexto# se tiver uma vírgula
 beq $t4, 0xa, verificaTexto # Verifica se texto tem espaco ou zero para aceitar palavra
 beq $t4, $t3 MesmaLetra # se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
 beq $t3, $zero, rejeita # Fim do texto palavra nao encontrada
@@ -137,8 +137,8 @@ addi $t0, $t0, 1 #texto
 addi $t1, $t1, 1 #palavra
 lb $t3, 0($t0) #pega as letras do texto
 lb $t4, 0($t1) #pega as letras da palavra
-beq $t3, 0x2e, incrementa2#verifica se a palavra termina com um ponto
-beq $t3, 0x2c, incrementa2# se tiver uma vírgula
+beq $t3, 0x2e, verificaTexto2#verifica se a palavra termina com um ponto
+beq $t3, 0x2c, verificaTexto2# se tiver uma vírgula
 beq $t4, 0xa, verificaTexto2
 beq $t4, $t3 MesmaLetra2 # se depois de incrementar as letras ainda forem iguais, volta pro sub-loop e incrementa de novo
 la $t1, palavra
